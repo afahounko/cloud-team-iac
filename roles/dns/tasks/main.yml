@@ -1,0 +1,25 @@
+---
+# tasks file for roles/dns
+
+- name: install svc
+  package:
+    name: "{{ svc.dns.pkg }}"
+    state: present
+
+
+- name: copy named.conf
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - "{{ svc.dns.templates }}"
+  notify:
+    - restart dns service
+
+- name: starting dns service
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - "{{ svc.dns.deamon }}"

@@ -1,0 +1,103 @@
+---
+
+domain: cloud.afnog.org
+
+svc:
+
+  dns:
+    hostname: dns1.cloud.afnog.org
+    ip:
+      addr: 10.10.10.11
+      mask: 255.255.255.0
+      gateway: 10.10.10.1
+    pkg:
+      - bind
+    deamon:
+      - named
+    templates:
+      - src: templates/named.conf
+        dest: /etc/named.conf   
+    os: centos7
+    listen_on:
+      - 127.0.0.1
+      - any
+    listen_on_v6:
+      - ::1
+      - any
+    allow_query:
+      - localhost
+      - any
+    
+
+  web:
+    hostname: web.cloud.afnog.org
+    ip:
+      addr: 10.10.10.12
+      mask: 255.255.255.0
+      gateway: 10.10.10.1
+    pkg:
+      - httpd
+    os: centos7
+
+
+  dhcp:
+    hostname: dhcp.cloud.afnog.org
+    ip:
+      addr: 10.10.20.13
+      mask: 255.255.255.0
+      gateway: 10.10.20.1
+    pkg:
+      - dhcp
+    os: centos7
+
+
+
+network:
+  routers:
+    - name: router1
+      desc: ISP WEB 1
+      interfaces:
+        - name: giga1/0
+          desc: internal interface
+          enable: yes
+          protocol: ospf
+          ip:
+            addr: 10.10.10.1
+            mask: 255.255.255.0
+            
+        - name: giga1/1
+          desc: connected to ISP
+          enable: True
+          protocol: static
+          ip:
+            addr: 196.200.223.211
+            mask: 255.255.255.0
+
+
+    - name: router2
+      desc: ISP WEB 2
+      interfaces:
+        - name: giga1/0
+          desc: internal interface
+          enable: yes
+          protocol: ospf
+          ip:
+            addr: 10.10.20.1
+            mask: 255.255.255.0
+            
+        - name: giga1/1
+          desc: connected to ISP
+          enable: True
+          protocol: static
+          ip:
+            addr: 196.200.219.11
+            mask: 255.255.255.0
+
+
+
+
+dhcp:
+    pool:
+      - name: pool1
+        ip_start: 10.10.10.200
+        ip_end: 10.10.10.230

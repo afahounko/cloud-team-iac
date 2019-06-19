@@ -1,0 +1,3 @@
+
+[dns]
+vm20.nmf.ws.afnog.org ansible_user=centos
