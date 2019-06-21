@@ -50,6 +50,34 @@ svc:
       - dhcp
     os: centos7
 
+  radius:
+    hostname: radius.cloud.afnog.org
+    ip:
+      addr: 10.10.20.14
+      mask: 255.255.255.0
+      gateway: 10.10.20.1
+    pkg:
+      - freeradius
+      - freeradius-common
+      - freeradius-utils
+      - libdbi-perl
+      - libltdl7
+      - libpython2.7
+      - libpython2.7-minimal
+      - libpython2.7-stdlib
+      - ssl-cert
+      - freeradius-ldap
+      - freeradius-postgresql
+      - freeradius-mysql
+      - freeradius-krb5
+      - libclone-perl
+      - libmldbm-perl
+      - libnet-daemon-perl
+      - libsql-statement-perl
+    deamon:
+      - freeradius
+    os: ubuntu
+
 
 
 network:

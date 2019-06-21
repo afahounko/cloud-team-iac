@@ -8,3 +8,12 @@
     - vars/main.yml
   roles:
      - { role: dns, tags: ['always'] }
+
+- name: deloy cloud-team radius
+  hosts: radius
+  gather_facts: true
+  become: true
+  vars_files:
+    - vars/main.yml
+  roles:
+     - { role: radius, tags: ['try']}

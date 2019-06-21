@@ -1,3 +1,6 @@
 
 [dns]
 vm20.nmf.ws.afnog.org ansible_user=centos
+
+[radius]
+vm14.nmf.ws.afnog.org ansible_user=ubuntu
