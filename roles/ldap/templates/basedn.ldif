@@ -1,0 +1,11 @@
+dn: cn:admin,dc=mak,dc=ug
+objectClass: organizationalUnit
+ou: person
+
+dn: ou=people,dc=mak.ac,dc=ug
+objectClass: organizationalUnit
+ou: people
+
+dn: ou=groups,dc=mak.ac,dc=ug
+objectClass: organizationalUnit
+ou: groups

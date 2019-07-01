@@ -1,0 +1,82 @@
+---
+# tasks file for roles/ldap
+
+- name: setting host name
+  become: yes
+  shell: hostnamectl set-hostname ldap.mak.ac.ug
+
+- name: adding host details to hosts file
+  become: yes
+  lineinfile:
+    path: /etc/hosts
+    line: "102.134.147.31 ldap.mak.ac.ug"
+    insertbefore: BOF
+  notify: Run Updates
+
+- name: install ldap
+  become: yes
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "{{ svc.ldap.pkg }}"
+
+- name: install python-ldap
+  become: yes
+  shell: pip3 install python-ldap passlib
+
+- name: install phpldapadmin
+  become: yes
+  shell: cd /var/www/html && git clone https://github.com/breisig/phpLDAPadmin.git
+
+- name: rename phpldapadmin
+  become: yes
+  shell: rsync -a /var/www/html/phpLDAPadmin/ /var/www/html/phpldapadmin/  
+
+- name: rename config sample file
+  become: yes
+  shell: cp -r /var/www/html/phpldapadmin/config/config.php.example /var/www/html/phpldapadmin/config/config.php
+
+- name: configure phpldapadmin
+  become: yes
+  lineinfile: 
+    dest: /var/www/html/phpldapadmin/config/config.php
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    backrefs: yes
+    insertbefore: EOF
+  with_items:
+    - "{{ svc.ldap.ldaplines }}"
+
+- name: copy basedn.ldif
+  become: yes
+  template: 
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items: 
+    - "{{ svc.ldap.templates }}"
+
+- name: configure php.ini file
+  become: yes
+  lineinfile:
+    path: /etc/php/7.2/apache2/php.ini
+    line: "extension=ldap.so"
+    insertbefore: EOF
+
+- name: configure apache2.conf file
+  become: yes
+  lineinfile:
+    path: /etc/apache2/apache2.conf
+    line: "ServerName 102.134.147.31"
+    insertbefore: EOF
+
+- name: enable proxy_fcgi extension
+  become: yes
+  shell: a2enmod proxy_fcgi
+  notify: 
+    - reload apache2 service
+    - restart apache2 service
+
+- name: open port 80 and 443
+  become: yes
+  shell: ufw allow proto tcp from any to any port 80,443

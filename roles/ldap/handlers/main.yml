@@ -1,0 +1,20 @@
+---
+# handlers file for roles/ldap
+
+- name: Run Updates
+  apt:
+    upgrade: yes
+    update_cache: yes
+
+- name: reload apache2 service
+  become: yes
+  shell: systemctl reload apache2.service
+
+- name: restart apache2 service
+  become: yes
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items:
+    - "{{ svc.ldap.deamon }}"
